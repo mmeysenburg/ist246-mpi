@@ -8,7 +8,7 @@ samples:
 
 - A Monte Carlo pi estimator, in `02-pi`
 
-- A Burning Ship fractal creator, in `03-burn` *(Under Construction)*
+- A Burning Ship fractal creator, in `03-burn` 
 
 - A deadlock example, in `04-deadlock` *(Under Construction)*
 
