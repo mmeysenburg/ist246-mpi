@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#SBATCH -n 16 
+#SBATCH --output=deadlock1-%A.out
+#SBATCH --mail-user mark.meysenburg@doane.edu
+#SBATCH --mail-type ALL
+
+module load openmpi
+mpirun bin/mpi-deadlock1.mpi

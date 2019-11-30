@@ -10,7 +10,7 @@ samples:
 
 - A Burning Ship fractal creator, in `03-burn` 
 
-- A deadlock example, in `04-deadlock` *(Under Construction)*
+- A deadlock example, in `04-deadlock`
 
 Each of the programs is written in C++, and each includes a makefile as well
 as a Slurm job file for submitting on Slurm-managed clusters.
