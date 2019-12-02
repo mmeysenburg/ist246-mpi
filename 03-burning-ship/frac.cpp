@@ -5,6 +5,13 @@
 #include <mpi.h>
 #include "EasyBMP.h"
 
+/*
+* Program to create a Burning Ship fractal, using MPI.
+* This program uses the EasyBMP C++ Bitmap Library
+* (see http://easybmp.sourceforge.net/).
+*/
+
+
 /**
  * Function to map from pixel coordinates to fractacl coordinates. This program
  * uses the EasyBMP C++ Bitmap Library (see http://easybmp.sourceforge.net/). 
