@@ -149,10 +149,8 @@ int main(int argC, char** ppArgv) {
 		}
 
 		// the final sub-processor's slice may be of a different size, so send its 
-		// values
-		pSliceBounds[0] = pSliceBounds[1] + 1;  // starting row as above
-		pSliceBounds[1] = pImgSize[1] - 1;      // ending row is just last row in 
-		                                        // the image
+		// values; ending row is just last row in the image
+		pSliceBounds[1] = pImgSize[1] - 1;
 
 		MPI_Send(pImgSize, 2, MPI::INT, nProcs - 1, MSG_IMG_SIZE, MPI_COMM_WORLD);
 		MPI_Send(pFracCoords, 4, MPI::DOUBLE, nProcs - 1, MSG_FRACTAL_COORDS, 
@@ -167,9 +165,11 @@ int main(int argC, char** ppArgv) {
 
 		// now, collect data from the sub-processors and create the image
 
-		// first, create a buffer to receive data
-		int numPoints = sliceHeight * pImgSize[0];
-		int* pPoints = new int[numPoints];
+		// first, create a buffer to receive data, big enough to hold a last slice
+		// that's bigger than the others
+		int maxNumPoints = (sliceHeight + 2) * pImgSize[0];
+		int* pPoints = new int[maxNumPoints];
+		int numPoints;
 
 		// p represents a single pixel in the image; its color values will be
 		// adjusted based on the values computed with the testPoint() 
@@ -186,7 +186,7 @@ int main(int argC, char** ppArgv) {
 		// of the image
 		for (int proc = 1; proc < nProcs; proc++) {
 
-			MPI_Recv(pPoints, numPoints, MPI::INT, proc, MSG_SLICE, MPI_COMM_WORLD, 
+			MPI_Recv(pPoints, maxNumPoints, MPI::INT, proc, MSG_SLICE, MPI_COMM_WORLD, 
 				&status);
 
 			// see how many points we actually received (since the last slice may be 
@@ -224,16 +224,21 @@ int main(int argC, char** ppArgv) {
 		MPI_Recv(pImgSize, 2, MPI::INT, 0, MSG_IMG_SIZE, MPI_COMM_WORLD, 
 			&status);
 		// get fractal coordinate bounds
-		MPI_Recv(pFracCoords, 4, MPI::LONG_DOUBLE, 0, MSG_FRACTAL_COORDS, 
+		MPI_Recv(pFracCoords, 4, MPI::DOUBLE, 0, MSG_FRACTAL_COORDS, 
 			MPI_COMM_WORLD, &status);
 		// get first and last row numbers for this processor
 		MPI_Recv(pSliceBounds, 2, MPI::INT, 0, MSG_SLICE_COORDS, 
 			MPI_COMM_WORLD, &status);
 
+		//cout << rank << ":\t" << pImgSize[0] << "\t" << pImgSize[1] << "\t" <<
+		//	pFracCoords[0] << "\t" << pFracCoords[1] << "\t" << pFracCoords[2] << "\t" << pFracCoords[3] << "\t" <<
+		//	pSliceBounds[0] << "\t" << pSliceBounds[1] << endl;;
+
 		// create a send buffer large enough to hold all the points this 
 		// processor will calculate
 		int numPoints = (pSliceBounds[1] - pSliceBounds[0] + 1) * pImgSize[0];
 		int *pPoints = new int[numPoints];
+		//cout << rank << ":\t" << numPoints << endl;
 
 		double x, y;                // fractal x, y coords
 		int col = 0;                // image col coord
