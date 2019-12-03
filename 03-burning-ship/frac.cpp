@@ -13,8 +13,7 @@
 
 
 /**
- * Function to map from pixel coordinates to fractacl coordinates. This program
- * uses the EasyBMP C++ Bitmap Library (see http://easybmp.sourceforge.net/). 
+ * Function to map from pixel coordinates to fractacl coordinates. 
  *
  * \param pixelCoord Pixel coord value (row or column) to map to fractal coord
  *
@@ -172,9 +171,13 @@ int main(int argC, char** ppArgv) {
 
 		// now, collect data from the sub-processors and create the image
 
-		// first, create a buffer to receive data, big enough to hold a last slice
-		// that's bigger than the others
-		int maxNumPoints = (sliceHeight + 2) * pImgSize[0];
+		// first, create a buffer to receive data, big enough to hold the 
+		// largest slice we might receive
+		int lastSliceHeight = pSliceBounds[1] - pSliceBounds[0] + 1;
+		int maxNumPoints = (lastSliceHeight > sliceHeight) ?
+			lastSliceHeight : sliceHeight;
+		maxNumPoints *= pImgSize[0];
+
 		int* pPoints = new int[maxNumPoints];
 		int numPoints;
 
